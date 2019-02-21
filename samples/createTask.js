@@ -37,17 +37,11 @@ async function createTask(project, location, queue, options) {
   const parent = client.queuePath(project, location, queue);
 
   const task = {
-    appEngineHttpRequest: {
-      httpMethod: 'POST',
-      relativeUri: '/log_payload',
+    httpRequest: {
+      httpMethod: 'GET',
+      url: options.url,
     },
   };
-
-  if (options.payload !== undefined) {
-    task.appEngineHttpRequest.body = Buffer.from(options.payload).toString(
-      'base64'
-    );
-  }
 
   if (options.inSeconds !== undefined) {
     task.scheduleTime = {
@@ -94,11 +88,12 @@ const cli = require(`yargs`)
       requiresArg: true,
       required: true,
     },
-    payload: {
-      alias: 'd',
-      description: '(Optional) Payload to attach to the push queue.',
+    url: {
+      alias: 'u',
+      description: 'URL to deliver the task to.',
       type: 'string',
       requiresArg: true,
+      required: true,
     },
     inSeconds: {
       alias: 's',
